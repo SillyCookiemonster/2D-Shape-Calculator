@@ -64,7 +64,7 @@ This program will..
 
 
 def num_check(question, num_type, exit_code=None):
-    """Checks the user enters an integer above 0"""
+    """Checks the user enters a number above 0"""
 
     if num_type == "int":
         error = "Error. Please enter an integer above 0."
@@ -91,10 +91,12 @@ def num_check(question, num_type, exit_code=None):
 
 
 def rectangle_calculator(square_or_rectangle):
+    """Gets the perimeter and area of a rectangle"""
 
+    # Ask for length
     length = num_check("Length: ", "float")
 
-    # set height of rectangle
+    # get height of non-square rectangle
     if square_or_rectangle == "rectangle":
         height = num_check("Height: ", "float")
 
@@ -103,35 +105,41 @@ def rectangle_calculator(square_or_rectangle):
         height = length
 
     # calculate perimeter and area
-    perimeter = 2*length+2*height
+    perimeter = 2*length + 2*height
     area = length*height
 
+    # Returns given lengths and calculated perimeter and area,
+    # all for later output
     return length, height, perimeter, area
 
 
 def circle_calculator():
+    """Gets the perimeter and area of a circle"""
 
     radius = num_check("Radius: ", "float")
 
     # calculate diameter, perimeter and area  incl. 2 dp
     diameter = 2*radius
+    perimeter = f"{diameter}π / {(math.pi * diameter):.2f}"
+    area = f"{radius**2}π / {(math.pi * radius**2):.2f}"
 
-    perimeter_rounded = two_decimal_points(math.pi*diameter)
-    perimeter = f"{diameter}π / {perimeter_rounded}"
-
-    area_rounded = two_decimal_points(math.pi*radius**2)
-    area = f"{radius**2}π / {area_rounded}"
-
+    # Returns given radius and calculated diameter, perimeter and area,
+    # all for later output
     return radius, diameter, perimeter, area
 
 
 def triangle_calculator():
+    """Gets the perimeter and area of a triangle,
+    reliant on which type of triangle is chosen"""
 
-    known_lengths = string_check("Side lengths or the base and height lengths? ", ('sides', 'base and height'))
+    # Get which lengths are known (Lengths of the base & height or the sides)
+    known_lengths = string_check("Side lengths or the base and height lengths? ",
+                                 ('sides', 'base and height'))
 
     # calculations if sides are known
     if known_lengths == "sides":
 
+        # Get side lengths
         side_1 = num_check("First side: ", "float")
         side_2 = num_check("Second side: ", "float")
         side_3 = num_check("Third side: ", "float")
@@ -141,27 +149,26 @@ def triangle_calculator():
         perimeter = side_1+side_2+side_3
 
         # implement herons law
-        semi_perimeter = perimeter/2
+        semi_perimeter = perimeter / 2
         # sqrt(s*(s - a)*(s - b)*(s - c)) inc. 2 dp
-        area_unrooted = semi_perimeter*(semi_perimeter-side_1)*(semi_perimeter-side_2)*(semi_perimeter-side_3)
-        area_rounded = two_decimal_points(math.sqrt(area_unrooted))
-        area = f"√{area_unrooted} OR {area_rounded}"
+        area_unrooted = (semi_perimeter * (semi_perimeter - side_1) * (semi_perimeter - side_2)
+                         * (semi_perimeter - side_3))
+        area = f"√{area_unrooted} / {math.sqrt(area_unrooted):.2f}"
 
     # calculations if base and height lengths are known
     else:
 
+        # get length of the base and height
         base_or_sides = num_check("Base: ", "float")
         height = num_check("Height: ", "float")
 
         # calculate perimeter and area
         perimeter = "N/A"
-        area = f"{((1/2)*base_or_sides*height):.2f}"
+        area = f"{(base_or_sides * height) / 2:.2f}"
 
+    # Returns given lengths and calculated perimeter and area,
+    # all for later output
     return base_or_sides, height, perimeter, area, known_lengths
-
-
-def two_decimal_points(x):
-    return "{:.2f}".format(x)
 
 
 # Main routine goes here
@@ -219,6 +226,7 @@ while True:
     else:
         break
 
+    # storing shape in list
     all_shapes.append(shape.title())
     all_base.append(data[0])
     all_height.append(data[1])
@@ -228,16 +236,7 @@ while True:
 # Make pandas
 shape_frame = pandas.DataFrame(shape_dict)
 
-table_string = tabulate(shape_frame, headers='keys', tablefmt='psql', showindex=False, colalign=("l", "r", "r", "r"))
+table_string = tabulate(shape_frame, headers='keys', tablefmt='psql', showindex=False,
+                         colalign=("left", "right", "right", "right", "right"), headersglobalalign= 'left')
 
 print(table_string)
-
-# r = 0
-# for item in all_shapes:
-#     print(all_shapes[r])
-#     print(all_base[r])
-#     print(all_height[r])
-#     print(all_perimeter[r])
-#     print(all_area[r])
-#     r += 1
-#
