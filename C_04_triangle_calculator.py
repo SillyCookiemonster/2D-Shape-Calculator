@@ -26,7 +26,7 @@ def string_check(question, valid_ans_list=('yes', 'no')):
 
         print(err)
 
-def num_check(question, num_type, exit_code=None):
+def num_check(question, num_type="float", exit_code=None):
     """Checks the user enters an integer above 0"""
 
     if num_type == "int":
@@ -54,39 +54,55 @@ def num_check(question, num_type, exit_code=None):
 
 
 def triangle_calculator():
+    """Gets the perimeter and area of a triangle using the given measurements,
+    including which type of triangle it is (if base & height are known or the side lengths)."""
 
-    known_lengths = string_check("Side lengths or the base and height lengths? ", ('sides', 'base and height'))
+    # Get which lengths are known (Lengths of the base & height or the sides)
+    known_lengths = string_check("Side lengths or the base and height lengths? ",
+                                 ('sides', 'base and height'))
 
     # calculations if sides are known
     if known_lengths == "sides":
-        triangle_type = "Sides"
 
-        side_1 = num_check("First side: ", "float")
-        side_2 = num_check("Second side: ", "float")
-        side_3 = num_check("Third side: ", "float")
+        # Get side lengths
+        side_1 = num_check("First side: ")
+        side_2 = num_check("Second side: ")
+        side_3 = num_check("Third side: ")
 
         base_or_sides = f"{side_1}, {side_2}, {side_3}"
+
+        # Checks if the triangle is real and returning if not
+        if (side_1+side_2<side_3) or (side_2+side_3<side_1) or (side_3+side_1<side_2):
+            return "not real"
+
+        # Height is incalculable
         height = "N/A"
+
+        # Calculate perimeter from side lengths
         perimeter = side_1+side_2+side_3
 
-        # implement herons law
-        semi_perimeter = perimeter/2
-        # sqrt(s*(s - a)*(s - b)*(s - c))
-        area_unrooted = semi_perimeter*(semi_perimeter-side_1)*(semi_perimeter-side_2)*(semi_perimeter-side_3)
-        area = f"√{area_unrooted} OR {math.sqrt(area_unrooted)}"
+        # implement herons law to find area
+        semi_perimeter = perimeter / 2
+        # where s = half of the perimeter
+        # sqrt(s*(s - a)*(s - b)*(s - c))   |   incl. 2 dp
+        area_unrooted = (semi_perimeter * (semi_perimeter - side_1) * (semi_perimeter - side_2)
+                         * (semi_perimeter - side_3))
+        area = f"√{area_unrooted} / {math.sqrt(area_unrooted):.2f}"
 
     # calculations if base and height lengths are known
     else:
-        triangle_type = "Base"
 
-        base_or_sides = num_check("Base: ", "float")
-        height = num_check("Height: ", "float")
+        # get length of the base and height
+        base_or_sides = num_check("Base: ")
+        height = num_check("Height: ")
 
         # calculate perimeter and area
         perimeter = "N/A"
-        area = (1/2)*base_or_sides*height
+        area = f"{(base_or_sides * height) / 2:.2f}"
 
-    return triangle_type, base_or_sides, height, perimeter, area
+    # Returns given lengths and calculated perimeter and area,
+    # all for later output
+    return base_or_sides, height, perimeter, area, known_lengths
 
 
 
@@ -96,9 +112,12 @@ def triangle_calculator():
 while True:
     calculations = triangle_calculator()
 
-    # output results
-    print(f"{calculations[0]}: {calculations[1]} units | Height: {calculations[2]} units")
-    print(f"Perimeter: {calculations[3]} units | Area: {calculations[4]} units^2\n")
+    if calculations == "not real":
+        print("This triangle is not real (side lengths can't form a triangle).")
+    else:
+        # output results
+        print(f"{calculations[4]}: {calculations[0]} units | Height: {calculations[1]} units")
+        print(f"Perimeter: {calculations[2]} units | Area: {calculations[3]} units^2\n")
 
 
 
