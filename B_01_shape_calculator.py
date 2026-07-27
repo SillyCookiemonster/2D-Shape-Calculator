@@ -85,13 +85,8 @@ Once you have finished using the calculator,
 def num_check(question, num_type="float", exit_code=None):
     """Checks the user enters a number above 0"""
 
-    # sets error message for what requirements the user is required to meet (integer or float)
-    if num_type == "int":
-        error = "Error. Please enter an integer above 0."
-        change_to = int
-    else:
-        error = "Error. Please enter a number above 0."
-        change_to = float
+    # sets error message for what requirements the user is required to meet
+    error = "Error. Please enter a number above 0."
 
     # Loops to make sure a number is indeed entered
     while True:
@@ -103,8 +98,8 @@ def num_check(question, num_type="float", exit_code=None):
             return response
 
         try:
-            # Check if the response can be changed into the expected answer format
-            response = change_to(response)
+            # Check if the response can be changed into a float
+            response = float(response)
 
             # Check if the user enters a valid length
             # Lengths must always be larger than zero
@@ -141,7 +136,7 @@ def rectangle_calculator(square_or_rectangle):
 
     # Returns given lengths and calculated perimeter and area,
     # all for later output
-    return length, height, perimeter, area
+    return f"{length:.2f}", f"{height:.2f}", f"{perimeter:.2f}", f"{area:.2f}"
 
 
 def circle_calculator():
@@ -151,12 +146,12 @@ def circle_calculator():
 
     # calculate diameter, perimeter and area  incl. 2 dp
     diameter = 2*radius
-    perimeter = f"{diameter}π / {(math.pi * diameter):.2f}"
-    area = f"{radius**2}π / {(math.pi * radius**2):.2f}"
+    perimeter = f"{diameter:.2f}π / {(math.pi * diameter):.2f}"
+    area = f"{radius**2:.2f}π / {(math.pi * radius**2):.2f}"
 
     # Returns given radius and calculated diameter, perimeter and area,
     # all for later output
-    return radius, diameter, perimeter, area
+    return f"{radius:.2f}", f"{diameter:.2f}", perimeter, area
 
 
 def triangle_calculator():
@@ -175,7 +170,7 @@ def triangle_calculator():
         side_2 = num_check("Second side: ")
         side_3 = num_check("Third side: ")
 
-        base_or_sides = f"{side_1}, {side_2}, {side_3}"
+        base_or_sides = f"{side_1:.2f}, {side_2:.2f}, {side_3:.2f}"
 
         # Checks if the triangle is real and returning if not
         if (side_1+side_2<=side_3) or (side_2+side_3<=side_1) or (side_3+side_1<=side_2):
@@ -195,6 +190,9 @@ def triangle_calculator():
                          * (semi_perimeter - side_3))
         area = f"√{area_unrooted:.2f} / {math.sqrt(area_unrooted):.2f}"
 
+        # Make lengths readable (2 d.p.) and able to be appended to list (string)
+        perimeter = f"{perimeter:.2f}"
+
     # calculations if base and height lengths are known
     else:
 
@@ -205,6 +203,10 @@ def triangle_calculator():
         # calculate perimeter and area
         perimeter = "N/A"
         area = f"{(base_or_sides * height) / 2:.2f}"
+
+        # Make lengths readable (2 d.p.) and able to be appended to list (string)
+        base_or_sides = f"{base_or_sides:.2f}"
+        height = f"{height:.2f}"
 
     # Returns given lengths and calculated perimeter and area,
     # all for later output
@@ -274,10 +276,10 @@ while True:
 
     # storing shape in list for data to be output in Pandas
     all_shapes.append(shape.title())
-    all_base.append(f"{data[0]:.2f} {units}")
-    all_height.append(f"{data[1]:.2f} {units}")
-    all_perimeter.append(f"{data[2]:.2f} {units}")
-    all_area.append(f"{data[3]:.2f} {units}²")
+    all_base.append(f"{data[0]} {units}")
+    all_height.append(f"{data[1]} {units}")
+    all_perimeter.append(f"{data[2]} {units}")
+    all_area.append(f"{data[3]} {units}²")
 
 # If the user didn't enter any shapes there is no need to print a table
 if len(all_shapes)  == 0:
